@@ -1,11 +1,11 @@
 ﻿using OpenTK;
 using OpenTK.Graphics.OpenGL;
 using System.Collections.Generic;
-using HelloWorld.Util;
+using GSharp.Util;
 using System;
 
-namespace HelloWorld.Graphics {
-	class Shader {
+namespace GSharp.Graphics.OpenGL {
+	public class Shader {
 		private int Handle;
 		private Dictionary<string, int> UniformCache;
 

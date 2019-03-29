@@ -1,6 +1,6 @@
 ﻿using OpenTK.Graphics.OpenGL;
 
-namespace HelloWorld {
+namespace GSharp.Util {
 	public enum DataType {
 		Byte, Short, Int, Long, Float, Double, Decimal, Bool
 	}

@@ -1,8 +1,8 @@
 ﻿using System.IO;
 using System.Text;
 
-namespace HelloWorld.Util {
-	class TextFile {
+namespace GSharp.Util {
+	public class TextFile {
 		private string Path;
 		private string Text;
 

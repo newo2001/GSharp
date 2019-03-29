@@ -1,8 +1,8 @@
-﻿using OpenTK.Graphics.OpenGL;
-using System;
+﻿using GSharp.Util;
+using GSharp.Graphics.UI;
 
-namespace HelloWorld.Graphics {
-	class Renderer {
+namespace GSharp.Graphics.OpenGL {
+	public class Renderer {
 		private Shader Shader;
 		private bool UseElements;
 		private VAO VAO;
@@ -60,6 +60,10 @@ namespace HelloWorld.Graphics {
 			foreach (Mesh mesh in meshes) {
 				AddMesh(mesh);
 			}
+		}
+
+		public void AddMenu(Menu menu) {
+			AddMesh(menu.GetMesh());
 		}
 
 		public Shader GetShader() {

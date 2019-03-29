@@ -4,10 +4,11 @@ using OpenTK;
 using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Input;
-using HelloWorld.Graphics;
+using GSharp.Graphics.OpenGL;
+using GSharp.Graphics.UI;
 
-namespace HelloWorld {
-	class Window : GameWindow {
+namespace GSharp.Graphics {
+	public class Window : GameWindow {
 
 		private Renderer Renderer;
 		private int VirtualWidth, VirtualHeight;
@@ -29,13 +30,9 @@ namespace HelloWorld {
 			GL.Enable(EnableCap.ScissorTest);
 
 			// Rendering code
-			Mesh mesh = new Mesh(4, 6);
-			mesh.AddRelativeIndices(new int[] { 0, 1, 2, 0, 2, 3 });
-			mesh.AddVertex(new Vertex(0f, 0f));
-			mesh.AddVertex(new Vertex(400f, 0f));
-			mesh.AddVertex(new Vertex(400f, 400f));
-			mesh.AddVertex(new Vertex(0f, 400f));
-			Renderer.AddMesh(mesh);
+			Menu menu = new Menu();
+			menu.AddItem(new UIButton("button", 400f, 400f, 500f, 200f));
+			Renderer.AddMenu(menu);		
 
 			base.OnLoad(e);
 		}

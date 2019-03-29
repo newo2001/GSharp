@@ -1,22 +1,39 @@
-﻿namespace HelloWorld.Graphics {
-	class Mesh {
-		private Vertex[] Vertices;
+﻿namespace GSharp.Graphics.OpenGL {
+	public class Mesh {
+		private float[] Vertices;
 		private int[] Indices;
 		private int VerticesIndex = 0;
 		private int IndicesIndex = 0;
 
 		public Mesh(int vertices, int indices = 0) {
-			Vertices = new Vertex[vertices];
+			Vertices = new float[vertices * 2];
 			Indices = new int[indices];
 		}
 
-		public void AddVertex(Vertex vertex) {
-			Vertices[VerticesIndex] = vertex;
+		public void AddMesh(Mesh mesh) {
+			mesh.Vertices.CopyTo(Vertices, VerticesIndex);
+			mesh.Indices.CopyTo(Indices, IndicesIndex);
+			VerticesIndex += mesh.GetVertexCapacity();
+			IndicesIndex += mesh.GetIndexCapacity();
+		}
+
+		public void AddVertex(float x, float y) {
+			Vertices[VerticesIndex * 2] = x;
+			Vertices[VerticesIndex * 2 + 1] = y;
 			VerticesIndex++;
 		}
 
+		public void AddVertices(float[] vertices) {
+			vertices.CopyTo(Vertices, VerticesIndex * 2);
+			VerticesIndex += vertices.Length / 2;
+		}
+
+		public void AddVertex(Vertex vertex) {
+			AddVertex(vertex.X, vertex.Y);
+		}
+
 		public void AddVertices(Vertex[] vertices) {
-			vertices.CopyTo(Vertices, VerticesIndex);
+			vertices.CopyTo(Vertices, VerticesIndex * 2);
 			VerticesIndex += vertices.Length;
 		}
 
@@ -49,7 +66,7 @@
 		}
 
 		public int GetVertexCapacity() {
-			return Vertices.Length;
+			return Vertices.Length / 2;
 		}
 
 		public int GetIndexCount() {
@@ -60,12 +77,12 @@
 			return Indices.Length;
 		}
 
-		public Vertex[] GetVertices() {
+		public float[] GetVertices() {
 			return Vertices;
 		}
 
 		public Vertex GetVertex(int index) {
-			return Vertices[index];
+			return new Vertex(Vertices[index / 2], Vertices[index / 2 + 1]);
 		}
 
 		public int[] GetIndices() {

@@ -1,7 +1,7 @@
 ﻿using OpenTK.Graphics.OpenGL;
 using System;
 
-namespace HelloWorld.Graphics {
+namespace GSharp.Graphics.OpenGL {
 	public abstract class Buffer {
 		private int Handle;
 		protected bool Ready = false;
@@ -56,6 +56,17 @@ namespace HelloWorld.Graphics {
 
 		public VBO(int size, bool dynamic = true) : base(size, BufferTarget.ArrayBuffer, dynamic) {
 			Data = new float[size];
+		}
+
+		public void AddVertex(float x, float y) {
+			Data[Index] = x;
+			Data[Index + 1] = y;
+			Index += 2;
+		}
+
+		public void AddVertices(float[] vertices) {
+			vertices.CopyTo(Data, Index);
+			Index += vertices.Length;
 		}
 
 		public void AddVertex(Vertex vertex) {

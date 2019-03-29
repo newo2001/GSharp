@@ -6,7 +6,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{48798529-77CB-4B50-A8E8-1C23CE81D123}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <RootNamespace>Gsharp</RootNamespace>
+    <RootNamespace>GSharp</RootNamespace>
     <AssemblyName>GSharp</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -50,6 +50,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Graphics\Geometry.cs" />
+    <Compile Include="Graphics\UI\IUIActionable.cs" />
+    <Compile Include="Graphics\UI\Menu.cs" />
+    <Compile Include="Graphics\UI\MenuItem.cs" />
+    <Compile Include="Graphics\UI\UIButton.cs" />
     <Compile Include="Util\DataType.cs" />
     <Compile Include="Graphics\OpenGL\Buffer.cs" />
     <Compile Include="Graphics\OpenGL\Shader.cs" />
@@ -84,7 +89,9 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
+    <None Include="App.config">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

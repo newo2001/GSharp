@@ -1,6 +1,7 @@
 using System;
+using GSharp.Graphics;
 
-namespace HelloWorld {
+namespace GSharp {
 	static class Program {
 		static Window Window;
 

@@ -1,8 +1,9 @@
 ﻿using System.Collections.Generic;
 using OpenTK.Graphics.OpenGL;
+using GSharp.Util;
 using System;
 
-namespace HelloWorld.Graphics {
+namespace GSharp.Graphics.OpenGL {
 	public class VAO {
 		private int Handle;
 		private List<VertexElement> Elements;
@@ -24,7 +25,7 @@ namespace HelloWorld.Graphics {
 			}
 		}
 
-		public void AddElement(DataType type, int count, bool normalized = false) {
+		public void AddElement(GSharp.Util.DataType type, int count, bool normalized = false) {
 			int offset = 0;
 			if (Elements.Count > 0) {
 				offset = Elements[Elements.Count].Offset + Elements[Elements.Count].Size;
@@ -79,12 +80,12 @@ namespace HelloWorld.Graphics {
 	}
 
 	public struct VertexElement {
-		public DataType Type;
+		public GSharp.Util.DataType Type;
 		public int Size;
 		public int Offset;
 		public bool Normalized;
 
-		public VertexElement(DataType type, int size, int offset, bool normalized = false) {
+		public VertexElement(GSharp.Util.DataType type, int size, int offset, bool normalized = false) {
 			Type = type;
 			Size = size;
 			Offset = offset;
