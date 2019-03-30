@@ -50,8 +50,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Events\Event.cs" />
+    <Compile Include="Events\EventHandler.cs" />
+    <Compile Include="Events\KeyboardEvent.cs" />
+    <Compile Include="Events\MouseEvent.cs" />
     <Compile Include="Graphics\Geometry.cs" />
-    <Compile Include="Graphics\UI\IUIActionable.cs" />
     <Compile Include="Graphics\UI\Menu.cs" />
     <Compile Include="Graphics\UI\MenuItem.cs" />
     <Compile Include="Graphics\UI\UIButton.cs" />

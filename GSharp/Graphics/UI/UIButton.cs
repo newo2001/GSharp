@@ -1,15 +1,24 @@
 ﻿using System;
 using GSharp.Graphics.OpenGL;
-using GSharp.Graphics;
+using GSharp.Events;
+using OpenTK.Input;
 
 namespace GSharp.Graphics.UI {
-	public class UIButton : MenuItem, IUIActionable {
+	public class UIButton : MenuItem {
 		private Action Action;
 		private float Width, Height;
 
-		public UIButton(string name, float x, float y, float width, float height) : base(name, x, y) {
+		public UIButton(float x, float y, float width, float height) : base(x, y) {
 			Width = width;
 			Height = height;
+
+			MousePressEvent.Subscribe(delegate(MousePressEvent e) {
+				if (e.GetButton() == MouseButton.Left) {
+					if (e.GetX() >= X && e.GetX() < X + Width && e.GetY() >= Y && e.GetY() < Y + Height) {
+						Action.Invoke();
+					}
+				}
+			});
 		}
 
 		public void SetWidth(float width) {
@@ -39,12 +48,9 @@ namespace GSharp.Graphics.UI {
 			return Mesh;
 		}
 
-		public void PerformAction() {
-			Action.Invoke();
-		}
-
-		public void SetAction(Action action) {
+		public UIButton SetAction(Action action) {
 			Action = action;
+			return this;
 		}
 	}
 }

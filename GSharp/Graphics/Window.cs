@@ -6,6 +6,7 @@ using OpenTK.Graphics.OpenGL;
 using OpenTK.Input;
 using GSharp.Graphics.OpenGL;
 using GSharp.Graphics.UI;
+using GSharp.Events;
 
 namespace GSharp.Graphics {
 	public class Window : GameWindow {
@@ -26,13 +27,12 @@ namespace GSharp.Graphics {
 		}
 
 		protected override void OnLoad(EventArgs e) {
+			GSharp.Events.EventHandler.RegisterEvents(this);
+
 			GL.ClearColor(0.1f, 0.2f, 0.5f, 0.0f);
 			GL.Enable(EnableCap.ScissorTest);
 
 			// Rendering code
-			Menu menu = new Menu();
-			menu.AddItem(new UIButton("button", 400f, 400f, 500f, 200f));
-			Renderer.AddMenu(menu);		
 
 			base.OnLoad(e);
 		}
@@ -73,11 +73,28 @@ namespace GSharp.Graphics {
 		}
 
 		protected override void OnKeyUp(KeyboardKeyEventArgs e) {
+			KeyUpEvent.Call(e.Key);
 			base.OnKeyUp(e);
+		}
 
-			if (e.Key == Key.Escape) {
-				Exit();
+		protected override void OnKeyDown(KeyboardKeyEventArgs e) {
+			if (e.IsRepeat) {
+				KeyRepeatEvent.Call(e.Key);
+			} else {
+				KeyDownEvent.Call(e.Key);
 			}
+
+			base.OnKeyDown(e);
+		}
+
+		protected override void OnMouseDown(MouseButtonEventArgs e) {
+			MousePressEvent.Call(e.Button, e.X, e.Y);
+			base.OnMouseDown(e);
+		}
+
+		protected override void OnMouseUp(MouseButtonEventArgs e) {
+			MouseReleaseEvent.Call(e.Button, e.X, e.Y);
+			base.OnMouseUp(e);
 		}
 
 		public Renderer GetRenderer() {
