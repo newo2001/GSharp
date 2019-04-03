@@ -1,5 +1,6 @@
 ﻿using GSharp.Util;
 using GSharp.Graphics.UI;
+using System.Collections.Generic;
 
 namespace GSharp.Graphics.OpenGL {
 	public class Renderer {
@@ -9,18 +10,23 @@ namespace GSharp.Graphics.OpenGL {
 		private VBO VBO;
 		private EBO EBO;
 
-		public Renderer(Shader shader, bool useElements = true) {
+		public Renderer(Shader shader, bool useElements, MeshAttribute[] attributes) {
 			UseElements = useElements;
 			Shader = shader;
+			List<MeshAttribute> attribs = new List<MeshAttribute>(attributes);
 
 			VBO = new VBO(1000, false);
 
 			if (UseElements) {
-				EBO = new EBO(VBO.GetCapacity() / 2, false);
+				EBO = new EBO(1000, false);
 			}
 
 			VAO = new VAO();
 			VAO.AddElement(DataType.Float, 2);
+			
+			if (attribs.Contains(MeshAttribute.TexCoords)) {
+				VAO.AddElement(DataType.Float, 2);
+			}
 
 			if (UseElements) {
 				VAO.Compile(EBO);
@@ -28,6 +34,8 @@ namespace GSharp.Graphics.OpenGL {
 				VAO.Compile();
 			}
 		}
+
+		public Renderer(Shader shader, bool useElements) : this(shader, useElements, new MeshAttribute[] { }) { }
 
 		public void Render() {
 			Shader.Use();
@@ -46,10 +54,23 @@ namespace GSharp.Graphics.OpenGL {
 			} else {
 				VAO.Render(VBO);
 			}
+
+			#if (DEBUG)
+				bool empty = true;
+				foreach (double d in Shader.GetUniform("projection")) {
+					if (d != 0) {
+						empty = false;
+						break;
+					}
+				}
+				if (empty) {
+					Logger.Log("No projection matrix is set!", Severity.Warning);
+				}
+			#endif
 		}
 
 		public void AddMesh(Mesh mesh) {
-			VBO.AddVertices(mesh.GetVertices());
+			VBO.AddData(mesh.GetVertices());
 
 			if (UseElements) {
 				EBO.AddData(mesh.GetIndices());

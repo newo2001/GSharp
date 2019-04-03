@@ -1,4 +1,5 @@
 ﻿using OpenTK.Graphics.OpenGL;
+using GSharp.Util;
 using System;
 
 namespace GSharp.Graphics.OpenGL {
@@ -32,16 +33,12 @@ namespace GSharp.Graphics.OpenGL {
 			GL.BindBuffer(Target, Handle);
 		}
 
-		public void Unbind() {
-			GL.BindBuffer(Target, 0);
-		}
-
 		protected void LogState(string name, BufferTarget target) {
 			int state;
 			GL.GetBufferParameter(target, BufferParameterName.BufferSize, out state);
-			Console.WriteLine("[" + name + "] Size: " + state);
+			Logger.Log("[" + name + "] Size: " + state);
 			GL.GetBufferParameter(target, BufferParameterName.BufferUsage, out state);
-			Console.WriteLine("[" + name + "] Usage: " + Enum.GetName(typeof(BufferUsageHint), state));
+			Logger.Log("[" + name + "] Usage: " + Enum.GetName(typeof(BufferUsageHint), state));
 		}
 
 		public abstract int GetSize();
@@ -58,33 +55,13 @@ namespace GSharp.Graphics.OpenGL {
 			Data = new float[size];
 		}
 
-		public void AddVertex(float x, float y) {
-			Data[Index] = x;
-			Data[Index + 1] = y;
-			Index += 2;
-		}
-
-		public void AddVertices(float[] vertices) {
-			vertices.CopyTo(Data, Index);
-			Index += vertices.Length;
-		}
-
-		public void AddVertex(Vertex vertex) {
-			Data[Index] = vertex.X;
-			Data[Index + 1] = vertex.Y;
-			Index += 2;
-		}
-
-		public void AddVertices(Vertex[] vertices) {
-			foreach (Vertex vertex in vertices) {
-				Data[Index] = vertex.X;
-				Data[Index + 1] = vertex.Y;
-				Index += 2;
-			}
+		public void AddData(float[] data) {
+			data.CopyTo(Data, Index);
+			Index += data.Length;
 		}
 
 		public override int GetSize() {
-			return Index / 2;
+			return Index;
 		}
 
 		public override void WriteToBuffer() {
@@ -99,13 +76,12 @@ namespace GSharp.Graphics.OpenGL {
 			Index = 0;
 		}
 
-		public void AddData(float[] data) {
-			data.CopyTo(Data, Index);
-			Index += data.Length;
-		}
-
 		public override void LogState() {
 			base.LogState("VBO", BufferTarget.ArrayBuffer);
+		}
+
+		public static void Unbind() {
+			GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
 		}
 	}
 
@@ -139,6 +115,10 @@ namespace GSharp.Graphics.OpenGL {
 
 		public override void LogState() {
 			base.LogState("EBO", BufferTarget.ElementArrayBuffer);
+		}
+
+		public static void Unbind() {
+			GL.BindBuffer(BufferTarget.ElementArrayBuffer, 0);
 		}
 	}
 }

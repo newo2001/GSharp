@@ -6,12 +6,13 @@ using OpenTK.Graphics.OpenGL;
 using OpenTK.Input;
 using GSharp.Graphics.OpenGL;
 using GSharp.Graphics.UI;
+using GSharp.Util;
 using GSharp.Events;
 
 namespace GSharp.Graphics {
 	public class Window : GameWindow {
-
 		private Renderer Renderer;
+		private Renderer TextureRenderer;
 		private int VirtualWidth, VirtualHeight;
 
 		public Window(int width, int height) : base(width, height, GraphicsMode.Default, "Hello World!") {
@@ -19,18 +20,21 @@ namespace GSharp.Graphics {
 			VirtualWidth = width;
 			VirtualHeight = height;
 			VSync = VSyncMode.Off;
-
-			Shader shader = new Shader("../../Graphics/OpenGL/Shaders/vertex.glsl", "../../Graphics/OpenGL/Shaders/fragment.glsl");
-			shader.SetUniform("color", 1.0f, 0f, 0f);
-
-			Renderer = new Renderer(shader, true);
 		}
 
 		protected override void OnLoad(EventArgs e) {
 			GSharp.Events.EventHandler.RegisterEvents(this);
+			Logger.Name = "GSharp";
 
 			GL.ClearColor(0.1f, 0.2f, 0.5f, 0.0f);
 			GL.Enable(EnableCap.ScissorTest);
+
+			Shader shader = new Shader("Graphics/OpenGL/Shaders/vertex.glsl", "Graphics/OpenGL/Shaders/fragment.glsl");
+			shader.SetUniform("color", 1.0f, 0f, 0f);
+			Renderer = new Renderer(shader, true);
+
+			Shader shader2 = new Shader("Graphics/OpenGL/Shaders/vertexTex.glsl", "Graphics/OpenGL/Shaders/fragmentTex.glsl");
+			TextureRenderer = new Renderer(shader2, true, new MeshAttribute[] { MeshAttribute.TexCoords });
 
 			// Rendering code
 
@@ -54,6 +58,7 @@ namespace GSharp.Graphics {
 
 			Matrix4 projection = Matrix4.CreateOrthographicOffCenter(0f, VirtualWidth, VirtualHeight, 0f, 0f, 1f);
 			Renderer.GetShader().SetUniform("projection", projection);
+			TextureRenderer.GetShader().SetUniform("projection", projection);
 
 			base.OnResize(e);
 		}
@@ -66,10 +71,12 @@ namespace GSharp.Graphics {
 			GL.Clear(ClearBufferMask.ColorBufferBit);
 
 			Renderer.Render();
+			TextureRenderer.Render();
 
 			Context.SwapBuffers();
 
 			base.OnRenderFrame(e);
+
 		}
 
 		protected override void OnKeyUp(KeyboardKeyEventArgs e) {

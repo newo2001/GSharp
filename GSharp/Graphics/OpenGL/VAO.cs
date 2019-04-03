@@ -14,7 +14,7 @@ namespace GSharp.Graphics.OpenGL {
 			Bind();
 		}
 
-		public void Render(VBO VBO, EBO EBO = null) {
+		public VAO Render(VBO VBO, EBO EBO = null) {
 			Bind();
 			VBO.Bind();
 
@@ -23,18 +23,20 @@ namespace GSharp.Graphics.OpenGL {
 			} else {
 				GL.DrawArrays(PrimitiveType.Triangles, 0, VBO.GetSize());
 			}
+			return this;
 		}
 
-		public void AddElement(GSharp.Util.DataType type, int count, bool normalized = false) {
+		public VAO AddElement(GSharp.Util.DataType type, int count, bool normalized = false) {
 			int offset = 0;
 			if (Elements.Count > 0) {
-				offset = Elements[Elements.Count].Offset + Elements[Elements.Count].Size;
+				offset = Elements[Elements.Count - 1].Offset + Elements[Elements.Count - 1].Size * Elements[Elements.Count - 1].Type.GetSize();
 			}
 
 			Elements.Add(new VertexElement(type, count, offset, normalized));
+			return this;
 		}
 
-		public void Compile(EBO EBO = null) {
+		public VAO Compile(EBO EBO = null) {
 			Bind();
 			
 			if (EBO != null) {
@@ -48,33 +50,36 @@ namespace GSharp.Graphics.OpenGL {
 
 			int index = 0;
 			foreach (VertexElement element in Elements) {
-				GL.VertexAttribPointer(index, element.Size, element.Type.GetGL(), element.Normalized, stride, 0);
+				GL.VertexAttribPointer(index, element.Size, element.Type.GetGL(), element.Normalized, stride, element.Offset);
 				GL.EnableVertexAttribArray(index);
 				index++;
 			}
+			return this;
 		}
 
-		public void LogState() {
+		public VAO LogState() {
 			double[] state = new double[1];
 			for (int i = 0; i < Elements.Count; i++) {
 				GL.GetVertexAttrib(i, VertexAttribParameter.ArrayEnabled, state);
-				Console.WriteLine("[Attribute " + i + "] Enabled: " + state[0]);
+				Logger.Log("[VAO Attribute " + i + "] Enabled: " + state[0]);
 				GL.GetVertexAttrib(i, VertexAttribParameter.ArrayNormalized, state);
-				Console.WriteLine("[Attribute " + i + "] Normalized: " + state[0]);
+				Logger.Log("[VAO Attribute " + i + "] Normalized: " + state[0]);
 				GL.GetVertexAttrib(i, VertexAttribParameter.ArraySize, state);
-				Console.WriteLine("[Attribute " + i + "] Size: " + state[0]);
+				Logger.Log("[VAO Attribute " + i + "] Size: " + state[0]);
 				GL.GetVertexAttrib(i, VertexAttribParameter.ArrayStride, state);
-				Console.WriteLine("[Attribute " + i + "] Stride: " + state[0]);
+				Logger.Log("[VAO Attribute " + i + "] Stride: " + state[0]);
 				GL.GetVertexAttrib(i, VertexAttribParameter.ArrayType, state);
-				Console.WriteLine("[Attribute " + i + "] Type: " + Enum.GetName(typeof(VertexAttribPointerType), (int) state[0]));
+				Logger.Log("[VAO Attribute " + i + "] Type: " + Enum.GetName(typeof(VertexAttribPointerType), (int) state[0]));
 			}
+			return this;
 		}
 
-		public void Bind() {
+		public VAO Bind() {
 			GL.BindVertexArray(Handle);
+			return this;
 		}
 
-		public void Unbind() {
+		public static void Unbind() {
 			GL.BindVertexArray(0);
 		}
 	}

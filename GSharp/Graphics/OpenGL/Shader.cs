@@ -16,23 +16,23 @@ namespace GSharp.Graphics.OpenGL {
 			int status;
 
 			int vertexShader = GL.CreateShader(ShaderType.VertexShader);
-			GL.ShaderSource(vertexShader, new TextFile(vertexPath).GetText());
+			GL.ShaderSource(vertexShader, new TextFile("../../" + vertexPath).GetText());
 			GL.CompileShader(vertexShader);
 			GL.GetShaderInfoLog(vertexShader, out info);
 			GL.GetShader(vertexShader, ShaderParameter.CompileStatus, out status);
 
 			if (status != 1) {
-				throw new ApplicationException("Vertex Shader compilation failed:\n " + info);
+				Logger.Log("Vertex Shader compilation failed:\n " + info, Severity.Fatal);
 			}
 
 			int fragmentShader = GL.CreateShader(ShaderType.FragmentShader);
-			GL.ShaderSource(fragmentShader, new TextFile(fragmentPath).GetText());
+			GL.ShaderSource(fragmentShader, new TextFile("../../" + fragmentPath).GetText());
 			GL.CompileShader(fragmentShader);
 			GL.GetShaderInfoLog(fragmentShader, out info);
 			GL.GetShader(fragmentShader, ShaderParameter.CompileStatus, out status);
 
 			if (status != 1) {
-				throw new ApplicationException("Fragment Shader compilation failed:\n " + info);
+				Logger.Log("Fragment Shader compilation failed:\n " + info, Severity.Fatal);
 			}
 
 			Handle = GL.CreateProgram();
@@ -42,7 +42,7 @@ namespace GSharp.Graphics.OpenGL {
 
 			info = GL.GetProgramInfoLog(Handle);
 			if (info != "") {
-				Console.WriteLine("Shader program compilation failed: " + info);
+				Logger.Log("Shader program compilation failed: " + info, Severity.Fatal);
 			}
 
 			Use();
@@ -53,6 +53,7 @@ namespace GSharp.Graphics.OpenGL {
 		}
 
 		public void SetUniform(string name, params float[] values) {
+			Use();
 			int location = GetUniformLocation(name);
 
 			switch (values.Length) {
@@ -77,7 +78,13 @@ namespace GSharp.Graphics.OpenGL {
 		}
 
 		public void SetUniform(string name, Matrix4 value) {
+			Use();
 			GL.UniformMatrix4(GetUniformLocation(name), false, ref value);
+		}
+
+		public void SetUniform(string name, Texture texture) {
+			Use();
+			GL.Uniform1(GetUniformLocation(name), texture.GetLastSlot());
 		}
 
 		private int GetUniformLocation(string name) {
@@ -88,6 +95,30 @@ namespace GSharp.Graphics.OpenGL {
 				int location = GL.GetUniformLocation(Handle, name);
 				UniformCache.Add(name, location);
 				return location;
+			}
+		}
+
+		public double[] GetUniform(string name) {
+			double[] value = new double[16];
+			GL.GetUniform(Handle, GetUniformLocation(name), value);
+			return value;
+		}
+
+		public void LogState() {
+			Logger.Log("[Shader] id: " + Handle);
+
+			foreach (string name in UniformCache.Keys) {
+				string data = "";
+				double[] values = GetUniform(name);
+				for (int i = 0; i < values.Length; i++) {
+					data += values[i] + ", ";
+				}
+
+				if (data.Length > 0) {
+					Logger.Log("[Shader] " + name + ": "  + data.Substring(0, data.Length - 2));
+				} else {
+					Logger.Log("[Shader] " + name + ": undefined");
+				}
 			}
 		}
 	}
