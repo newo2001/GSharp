@@ -7,18 +7,18 @@ namespace GSharp.Graphics.OpenGL {
 		private Shader Shader;
 		private bool UseElements;
 		private VAO VAO;
-		private VBO VBO;
-		private EBO EBO;
+		private Buffer<float> VBO;
+		private Buffer<int> EBO;
 
 		public Renderer(Shader shader, bool useElements, MeshAttribute[] attributes) {
 			UseElements = useElements;
 			Shader = shader;
 			List<MeshAttribute> attribs = new List<MeshAttribute>(attributes);
 
-			VBO = new VBO(1000, false);
+			VBO = new Buffer<float>(1000, false);
 
 			if (UseElements) {
-				EBO = new EBO(1000, false);
+				EBO = new Buffer<int>(1000, false);
 			}
 
 			VAO = new VAO();

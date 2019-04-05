@@ -3,20 +3,30 @@ using GSharp.Util;
 using System;
 
 namespace GSharp.Graphics.OpenGL {
-	public abstract class Buffer {
+	public class Buffer<T> where T : struct {
 		private int Handle;
-		protected bool Ready = false;
-		protected BufferTarget Target;
-		protected bool Dynamic;
-		protected int Index = 0;
-		protected int Size;
+		private bool Ready = false;
+		private BufferTarget Target;
+		private bool Dynamic;
+		private int Index = 0;
+		private int Size;
+		private T[] Data;
 
-		public Buffer(int size, BufferTarget target, bool dynamic) {
+		public Buffer(int size, bool dynamic) {
+			if (typeof(T) == typeof(int)) {
+				Target = BufferTarget.ElementArrayBuffer;
+			} else if (typeof(T) == typeof(float)) {
+				Target = BufferTarget.ArrayBuffer;
+			} else {
+				Logger.Log("Buffer can only be constructed with the types: int, float", Severity.Error);
+				return;
+			}
+
 			Handle = GL.GenBuffer();
 
 			Size = size;
 			Dynamic = dynamic;
-			Target = target;
+			Data = new T[Size];
 
 			Bind();
 		}
@@ -41,83 +51,36 @@ namespace GSharp.Graphics.OpenGL {
 			Logger.Log("[" + name + "] Usage: " + Enum.GetName(typeof(BufferUsageHint), state));
 		}
 
-		public abstract int GetSize();
-		public abstract void ClearData();
-		public abstract void WriteToBuffer();
-		public abstract void LogState();
-		
-	}
-
-	public class VBO : Buffer {
-		private float[] Data;
-
-		public VBO(int size, bool dynamic = true) : base(size, BufferTarget.ArrayBuffer, dynamic) {
-			Data = new float[size];
-		}
-
-		public void AddData(float[] data) {
+		public void AddData(T[] data) {
 			data.CopyTo(Data, Index);
 			Index += data.Length;
 		}
 
-		public override int GetSize() {
+		public int GetSize() {
 			return Index;
 		}
 
-		public override void WriteToBuffer() {
+		public void WriteToBuffer() {
 			Bind();
 			BufferUsageHint usage = Dynamic ? BufferUsageHint.DynamicDraw : BufferUsageHint.StaticDraw;
 			GL.BufferData(Target, Index * 4, Data, usage);
 			Ready = true;
 		}
 
-		public override void ClearData() {
-			Data = new float[Size];
+		public void ClearData() {
+			Data = new T[Size];
 			Index = 0;
 		}
 
-		public override void LogState() {
-			base.LogState("VBO", BufferTarget.ArrayBuffer);
+		public void Unbind() {
+			GL.BindBuffer(Target, 0);
 		}
 
-		public static void Unbind() {
+		public static void UnbindVBO() {
 			GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
 		}
-	}
 
-	public class EBO : Buffer {
-		private int[] Data;
-
-		public EBO(int size, bool dynamic = true) : base(size, BufferTarget.ElementArrayBuffer, dynamic) {
-			Data = new int[size];
-		}
-
-		public override int GetSize() {
-			return Index;
-		}
-
-		public override void WriteToBuffer() {
-			Bind();
-			BufferUsageHint usage = Dynamic ? BufferUsageHint.DynamicDraw : BufferUsageHint.StaticDraw;
-			GL.BufferData(Target, Index * 4, Data, usage);
-			Ready = true;
-		}
-
-		public override void ClearData() {
-			Data = new int[Size];
-			Index = 0;
-		}
-
-		public void AddData(int[] data) {
-			data.CopyTo(Data, Index);
-			Index += data.Length;
-		}
-
-		public override void LogState() {
-			base.LogState("EBO", BufferTarget.ElementArrayBuffer);
-		}
-
-		public static void Unbind() {
+		public static void UnbindEBO() {
 			GL.BindBuffer(BufferTarget.ElementArrayBuffer, 0);
 		}
 	}

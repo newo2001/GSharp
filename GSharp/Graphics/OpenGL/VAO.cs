@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using OpenTK.Graphics.OpenGL;
+using GSharp.Graphics.OpenGL;
 using GSharp.Util;
 using System;
 
@@ -14,7 +15,7 @@ namespace GSharp.Graphics.OpenGL {
 			Bind();
 		}
 
-		public VAO Render(VBO VBO, EBO EBO = null) {
+		public VAO Render(Buffer<float> VBO, Buffer<int> EBO = null) {
 			Bind();
 			VBO.Bind();
 
@@ -26,7 +27,7 @@ namespace GSharp.Graphics.OpenGL {
 			return this;
 		}
 
-		public VAO AddElement(GSharp.Util.DataType type, int count, bool normalized = false) {
+		public VAO AddElement(Util.DataType type, int count, bool normalized = false) {
 			int offset = 0;
 			if (Elements.Count > 0) {
 				offset = Elements[Elements.Count - 1].Offset + Elements[Elements.Count - 1].Size * Elements[Elements.Count - 1].Type.GetSize();
@@ -36,7 +37,7 @@ namespace GSharp.Graphics.OpenGL {
 			return this;
 		}
 
-		public VAO Compile(EBO EBO = null) {
+		public VAO Compile(Buffer<int> EBO = null) {
 			Bind();
 			
 			if (EBO != null) {
@@ -85,12 +86,12 @@ namespace GSharp.Graphics.OpenGL {
 	}
 
 	public struct VertexElement {
-		public GSharp.Util.DataType Type;
+		public Util.DataType Type;
 		public int Size;
 		public int Offset;
 		public bool Normalized;
 
-		public VertexElement(GSharp.Util.DataType type, int size, int offset, bool normalized = false) {
+		public VertexElement(Util.DataType type, int size, int offset, bool normalized = false) {
 			Type = type;
 			Size = size;
 			Offset = offset;
