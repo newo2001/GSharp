@@ -1,4 +1,4 @@
-﻿using GSharp.Graphics.OpenGL;
+﻿/*using GSharp.Graphics.OpenGL;
 
 namespace GSharp.Graphics.UI {
 	public abstract class MenuItem {
@@ -32,3 +32,4 @@ namespace GSharp.Graphics.UI {
 		public abstract Mesh GetMesh();
 	}
 }
+*/

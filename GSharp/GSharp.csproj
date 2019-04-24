@@ -69,7 +69,11 @@
     <Compile Include="Events\EventHandler.cs" />
     <Compile Include="Events\KeyboardEvent.cs" />
     <Compile Include="Events\MouseEvent.cs" />
-    <Compile Include="Graphics\Geometry.cs" />
+    <Compile Include="Graphics\Geometry\Rectangle.cs" />
+    <Compile Include="Graphics\IRenderable.cs" />
+    <Compile Include="Graphics\OpenGL\RenderBatch.cs" />
+    <Compile Include="Graphics\OpenGL\VertexComponent.cs" />
+    <Compile Include="Graphics\Sprite.cs" />
     <Compile Include="Graphics\Texture.cs" />
     <Compile Include="Graphics\UI\Menu.cs" />
     <Compile Include="Graphics\UI\MenuItem.cs" />
@@ -77,8 +81,6 @@
     <Compile Include="Util\DataType.cs" />
     <Compile Include="Graphics\OpenGL\Buffer.cs" />
     <Compile Include="Graphics\OpenGL\Shader.cs" />
-    <Compile Include="Graphics\OpenGL\Mesh.cs" />
-    <Compile Include="Graphics\Renderer.cs" />
     <Compile Include="Graphics\OpenGL\VAO.cs" />
     <Compile Include="Graphics\Window.cs" />
     <Compile Include="Program.cs" />
@@ -94,9 +96,11 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <None Include="atlas.desc" />
     <None Include="Graphics\OpenGL\Shaders\fragment.glsl" />
     <None Include="Graphics\OpenGL\Shaders\fragmentTex.glsl" />
     <None Include="Graphics\OpenGL\Shaders\vertex.glsl" />
+    <None Include="Graphics\OpenGL\Shaders\vertexAtlas.glsl" />
     <None Include="Graphics\OpenGL\Shaders\vertexTex.glsl" />
     <None Include="OpenTK.dll.config" />
     <None Include="packages.config" />
@@ -116,9 +120,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="test.png" />
-  </ItemGroup>
-  <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.6.1">
       <Visible>False</Visible>
       <ProductName>Microsoft .NET Framework 4.6.1 %28x86 and x64%29</ProductName>
@@ -129,6 +130,9 @@
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="atlas.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

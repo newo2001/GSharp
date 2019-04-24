@@ -1,18 +1,19 @@
 ﻿using System;
-
 using OpenTK;
 using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Input;
 using GSharp.Graphics.OpenGL;
-using GSharp.Graphics.UI;
 using GSharp.Util;
 using GSharp.Events;
+using GSharp.Graphics.Geometry;
 
 namespace GSharp.Graphics {
 	public class Window : GameWindow {
-		private Renderer Renderer;
-		private Renderer TextureRenderer;
+		private RenderBatch Batch;
+		private RenderBatch TextureBatch;
+		private RenderBatch AtlasBatch;
+		private TextureAtlas Atlas;
 		private int VirtualWidth, VirtualHeight;
 
 		public Window(int width, int height) : base(width, height, GraphicsMode.Default, "Hello World!") {
@@ -23,22 +24,27 @@ namespace GSharp.Graphics {
 		}
 
 		protected override void OnLoad(EventArgs e) {
-			GSharp.Events.EventHandler.RegisterEvents(this);
+			Events.EventHandler.RegisterEvents(this);
 			Logger.Name = "GSharp";
 
 			GL.ClearColor(0.1f, 0.2f, 0.5f, 0.0f);
 			GL.Enable(EnableCap.ScissorTest);
 
 			Shader shader = new Shader("Graphics/OpenGL/Shaders/vertex.glsl", "Graphics/OpenGL/Shaders/fragment.glsl");
-			shader.SetUniform("color", 1.0f, 0f, 0f);
-			Renderer = new Renderer(shader, true);
+			Shader textureShader = new Shader("Graphics/OpenGL/Shaders/vertexTex.glsl", "Graphics/OpenGL/Shaders/fragmentTex.glsl");
+			Shader atlasShader = new Shader("Graphics/OpenGL/Shaders/vertexAtlas.glsl", "Graphics/OpenGL/Shaders/fragmentTex.glsl");
 
-			Shader shader2 = new Shader("Graphics/OpenGL/Shaders/vertexTex.glsl", "Graphics/OpenGL/Shaders/fragmentTex.glsl");
-			TextureRenderer = new Renderer(shader2, true, new MeshAttribute[] { MeshAttribute.TexCoords });
+			Batch = new RenderBatch(new VertexComponent[] { VertexComponent.Coord, VertexComponent.Color }, shader, false);
+			TextureBatch = new RenderBatch(new VertexComponent[] { VertexComponent.Coord, VertexComponent.TexCoord }, textureShader, false);
+			AtlasBatch = new RenderBatch(new VertexComponent[] { VertexComponent.Coord, VertexComponent.TexCoord, VertexComponent.TexLocation }, atlasShader, false);
 
-			// Rendering code
+			LoadGeometry();
 
 			base.OnLoad(e);
+		}
+
+		private void LoadGeometry() {
+			
 		}
 
 		protected override void OnResize(EventArgs e) {
@@ -57,8 +63,7 @@ namespace GSharp.Graphics {
 			GL.Scissor(vpX, vpY, vpWidth, vpHeight);
 
 			Matrix4 projection = Matrix4.CreateOrthographicOffCenter(0f, VirtualWidth, VirtualHeight, 0f, 0f, 1f);
-			Renderer.GetShader().SetUniform("projection", projection);
-			TextureRenderer.GetShader().SetUniform("projection", projection);
+			RenderBatch.SetProjectionMatrix(projection);
 
 			base.OnResize(e);
 		}
@@ -70,13 +75,13 @@ namespace GSharp.Graphics {
 		protected override void OnRenderFrame(FrameEventArgs e) {
 			GL.Clear(ClearBufferMask.ColorBufferBit);
 
-			Renderer.Render();
-			TextureRenderer.Render();
+			Batch.Render();
+			TextureBatch.Render();
+			AtlasBatch.Render();
 
 			Context.SwapBuffers();
 
 			base.OnRenderFrame(e);
-
 		}
 
 		protected override void OnKeyUp(KeyboardKeyEventArgs e) {
@@ -102,10 +107,6 @@ namespace GSharp.Graphics {
 		protected override void OnMouseUp(MouseButtonEventArgs e) {
 			MouseReleaseEvent.Call(e.Button, e.X, e.Y);
 			base.OnMouseUp(e);
-		}
-
-		public Renderer GetRenderer() {
-			return Renderer;
 		}
 	}
 }

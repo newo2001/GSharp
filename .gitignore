@@ -6,3 +6,10 @@
 */obj/*
 */bin/*
 */Properties/*
+
+*.png
+*.jpg
+*.jpeg
+*.bmp
+
+*.desc

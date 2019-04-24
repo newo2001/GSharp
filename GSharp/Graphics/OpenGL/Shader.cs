@@ -67,14 +67,17 @@ namespace GSharp.Graphics.OpenGL {
 					GL.Uniform3(location, values[0], values[1], values[2]);
 					break;
 				case 4:
-					GL.Uniform4(location, values[0], values[1], values[3], values[4]);
+					GL.Uniform4(location, values[0], values[1], values[2], values[3]);
 					break;
 			}
 		}
 
 		public void SetUniform(string name, params int[] values) {
-			float[] floats = (float[]) values.Clone();
-			SetUniform(name, values);
+			float[] floats = new float[values.Length];
+			for (int i = 0; i < values.Length; i++) {
+				floats[i] = (float) values[i];
+			}
+			SetUniform(name, floats);
 		}
 
 		public void SetUniform(string name, Matrix4 value) {
@@ -85,6 +88,10 @@ namespace GSharp.Graphics.OpenGL {
 		public void SetUniform(string name, Texture texture) {
 			Use();
 			GL.Uniform1(GetUniformLocation(name), texture.GetLastSlot());
+		}
+
+		public void SetProjectionMatrix(Matrix4 matrix) {
+			SetUniform("projection", matrix);
 		}
 
 		private int GetUniformLocation(string name) {

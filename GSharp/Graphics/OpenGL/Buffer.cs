@@ -43,18 +43,25 @@ namespace GSharp.Graphics.OpenGL {
 			GL.BindBuffer(Target, Handle);
 		}
 
-		protected void LogState(string name, BufferTarget target) {
-			int state;
-			GL.GetBufferParameter(target, BufferParameterName.BufferSize, out state);
-			Logger.Log("[" + name + "] Size: " + state);
-			GL.GetBufferParameter(target, BufferParameterName.BufferUsage, out state);
-			Logger.Log("[" + name + "] Usage: " + Enum.GetName(typeof(BufferUsageHint), state));
+		public void Remove() {
+			GL.DeleteBuffer(Handle);
 		}
+
+		#if (DEBUG)
+			protected void LogState(string name, BufferTarget target) {
+				int state;
+				GL.GetBufferParameter(target, BufferParameterName.BufferSize, out state);
+				Logger.Log("[" + name + "] Size: " + state);
+				GL.GetBufferParameter(target, BufferParameterName.BufferUsage, out state);
+				Logger.Log("[" + name + "] Usage: " + Enum.GetName(typeof(BufferUsageHint), state));
+			}
+		#endif
 
 		public void AddData(T[] data) {
 			data.CopyTo(Data, Index);
 			Index += data.Length;
 		}
+		
 
 		public int GetSize() {
 			return Index;

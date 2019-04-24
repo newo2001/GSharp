@@ -7,7 +7,7 @@ out vec2 f_texCoords;
 uniform mat4 projection;
 
 void main() {
-	f_texCoords = vec2(v_texCoords.x, v_texCoords.y);
+	f_texCoords = v_texCoords;
 
 	gl_Position = projection * vec4(v_position, 0.0, 1.0);
 }

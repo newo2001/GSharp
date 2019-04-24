@@ -1,4 +1,5 @@
 ﻿using System;
+using OpenTK;
 
 namespace GSharp.Util {
 	public static class Logger {
@@ -26,6 +27,18 @@ namespace GSharp.Util {
 
 			Console.WriteLine("[" + Name + "] [" + severity.ToString() + "] " + message);
 			Console.ForegroundColor = oldColor;
+		}
+
+		public static void Log(Vector2 vec, Severity severity = Severity.Debug) {
+			Log(vec.X + ", " + vec.Y, severity);
+		}
+
+		public static void Log(Vector3 vec, Severity severity = Severity.Debug) {
+			Log(vec.X + ", " + vec.Y + ", " + vec.Z, severity);
+		}
+
+		public static void Log(Vector4 vec, Severity severity = Severity.Debug) {
+			Log(vec.X + ", " + vec.Y + ", " + vec.Z + ", " + vec.W, severity);
 		}
 	}
 

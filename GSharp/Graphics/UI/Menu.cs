@@ -1,7 +1,7 @@
 ﻿using GSharp.Graphics.OpenGL;
 using System.Collections.Generic;
 
-namespace GSharp.Graphics.UI {
+/*namespace GSharp.Graphics.UI {
 	public class Menu {
 		List<MenuItem> Items;
 
@@ -27,4 +27,4 @@ namespace GSharp.Graphics.UI {
 			return mesh;
 		}
 	}
-}
+}*/
