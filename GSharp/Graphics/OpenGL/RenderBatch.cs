@@ -21,7 +21,7 @@ namespace GSharp.Graphics.OpenGL {
 		private int Vertices = 0, Indices = 0;
 		private bool Dirty = true;
 
-		public RenderBatch(VertexComponent[] format, Shader shader, bool dynamic, int maxVertices = 320000, int maxIndices = 32000) {
+		public RenderBatch(VertexComponent[] format, Shader shader, bool dynamic, int maxVertices = 32000, int maxIndices = 3200) {
 			Shader = shader;
 			Format = format;
 			MaxVertices = maxVertices;
@@ -48,16 +48,17 @@ namespace GSharp.Graphics.OpenGL {
 		}
 
 		public void Add(IRenderable renderable) {
+			#if (DEBUG)
+				if (!renderable.GetVertexFormat().CompareEquals(Format)) {
+					Logger.Log("Renderable was added to a batch with a different vertex format!", Severity.Warning);
+				}
+			#endif
+
 			Renderables.Add(renderable);
 			Dirty = true;
 
-			if (renderable is AtlasSprite atlasSprite) {
-				#if (DEBUG)
-					if (Atlas != null) {
-						Logger.Log("Can't bind more than one atlas to a shader, only the last one will be bound!", Severity.Warning);
-					}
-				#endif
-				Atlas = atlasSprite.GetTexture();
+			if (renderable is AtlasSprite atlasSprite && Atlas != null) {
+				atlasSprite.SetAtlas(Atlas);
 			}
 
 			if (renderable is Sprite sprite) {
@@ -194,6 +195,16 @@ namespace GSharp.Graphics.OpenGL {
 
 		public void SetShader(Shader shader) {
 			Shader = shader;
+		}
+
+		public void SetAtlas(TextureAtlas atlas) {
+			Atlas = atlas;
+
+			foreach (IRenderable renderable in Renderables) {
+				if (renderable is AtlasSprite sprite) {
+					sprite.SetAtlas(Atlas);
+				}
+			}
 		}
 
 		public void ClearTextures() {

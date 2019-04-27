@@ -16,6 +16,8 @@ namespace GSharp.Graphics {
 		private TextureAtlas Atlas;
 		private int VirtualWidth, VirtualHeight;
 
+		private AtlasSprite sprite;
+
 		public Window(int width, int height) : base(width, height, GraphicsMode.Default, "Hello World!") {
 			//WindowState = WindowState.Fullscreen;
 			VirtualWidth = width;
@@ -30,6 +32,8 @@ namespace GSharp.Graphics {
 			GL.ClearColor(0.1f, 0.2f, 0.5f, 0.0f);
 			GL.Enable(EnableCap.ScissorTest);
 
+			Atlas = new TextureAtlas("atlas.png", "atlas.desc", TextureFilter.Nearest);
+
 			Shader shader = new Shader("Graphics/OpenGL/Shaders/vertex.glsl", "Graphics/OpenGL/Shaders/fragment.glsl");
 			Shader textureShader = new Shader("Graphics/OpenGL/Shaders/vertexTex.glsl", "Graphics/OpenGL/Shaders/fragmentTex.glsl");
 			Shader atlasShader = new Shader("Graphics/OpenGL/Shaders/vertexAtlas.glsl", "Graphics/OpenGL/Shaders/fragmentTex.glsl");
@@ -37,6 +41,7 @@ namespace GSharp.Graphics {
 			Batch = new RenderBatch(new VertexComponent[] { VertexComponent.Coord, VertexComponent.Color }, shader, false);
 			TextureBatch = new RenderBatch(new VertexComponent[] { VertexComponent.Coord, VertexComponent.TexCoord }, textureShader, false);
 			AtlasBatch = new RenderBatch(new VertexComponent[] { VertexComponent.Coord, VertexComponent.TexCoord, VertexComponent.TexLocation }, atlasShader, false);
+			AtlasBatch.SetAtlas(Atlas);
 
 			LoadGeometry();
 
@@ -44,7 +49,8 @@ namespace GSharp.Graphics {
 		}
 
 		private void LoadGeometry() {
-			
+			sprite = new AtlasSprite(300, 300, 200, 200, "log_top");
+			AtlasBatch.Add(sprite);
 		}
 
 		protected override void OnResize(EventArgs e) {

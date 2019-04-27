@@ -4,9 +4,9 @@ using OpenTK;
 
 namespace GSharp.Graphics {
 	public class Sprite : Rectangle, IRenderable {
-		protected Texture Texture;
+		private Texture Texture;
 
-		public Sprite(float x, float y, Texture texture) : base(x, y, texture.GetWidth(), texture.GetHeight()) {
+		public Sprite(float x, float y, float width, float height, Texture texture) : base(x, y, width, height) {
 			Texture = texture;
 		}
 
@@ -15,11 +15,13 @@ namespace GSharp.Graphics {
 		}
 
 		protected override void UpdateData() {
+			ApplyTransform();
+
 			Vertices = new float[] {
-				X, Y, 0f, 1f,
-				X + Texture.GetWidth(), Y, 1f, 1f,
-				X + Texture.GetWidth(), Y + Texture.GetHeight(), 1f, 0f,
-				X, Y + Texture.GetHeight(), 0f, 0f
+				TopLeft.X, TopLeft.Y, 0f, 1f,
+				TopRight.X, TopRight.Y, 1f, 1f,
+				BottomRight.X, BottomRight.Y, 1f, 0f,
+				BottomLeft.X, BottomLeft.Y, 0f, 0f
 			};
 
 			Dirty = false;
@@ -30,30 +32,33 @@ namespace GSharp.Graphics {
 		}
 	}
 
-	public class AtlasSprite : Sprite, IRenderable {
-		new TextureAtlas Texture;
+	public class AtlasSprite : Rectangle, IRenderable {
 		private int TexX, TexY, TexW, TexH;
+		private string Location;
 
-		public AtlasSprite(float x, float y, TextureAtlas atlas, string texture) : base(x, y, atlas) {
-			Texture = atlas;
-
-			Vector4 location = atlas.GetLocation(texture);
-			TexX = (int) location.X;
-			TexY = (int) location.Y;
-			TexW = (int) location.Z;
-			TexH = (int) location.W;
+		public AtlasSprite(float x, float y, float width, float height, string texture) : base(x, y, width, height) {
+			Location = texture;
 		}
 
-		new public TextureAtlas GetTexture() {
-			return Texture;
+		public void SetAtlas(TextureAtlas atlas) {
+			Vector4 location = atlas.GetLocation(Location);
+
+			TexX = (int)location.X;
+			TexY = (int)location.Y;
+			TexW = (int)location.Z;
+			TexH = (int)location.W;
+
+			UpdateData();
 		}
 
 		protected override void UpdateData() {
+			ApplyTransform();
+
 			Vertices = new float[] {
-				X, Y, 0f, 1f, TexX, TexY, TexW, TexH,
-				X + Texture.GetWidth(), Y, 1f, 1f, TexX, TexY, TexW, TexH,
-				X + Texture.GetWidth(), Y + Texture.GetHeight(), 1f, 0f, TexX, TexY, TexW, TexH,
-				X, Y + Texture.GetHeight(), 0f, 0f, TexX, TexY, TexW, TexH
+				TopLeft.X, TopLeft.Y, 0f, 1f, TexX, TexY, TexW, TexH,
+				TopRight.X, TopRight.Y, 1f, 1f, TexX, TexY, TexW, TexH,
+				BottomRight.X, BottomRight.Y, 1f, 0f, TexX, TexY, TexW, TexH,
+				BottomLeft.X, BottomLeft.Y, 0f, 0f, TexX, TexY, TexW, TexH
 			};
 
 			Dirty = false;
