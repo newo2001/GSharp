@@ -16,7 +16,8 @@ namespace GSharp.Graphics {
 		private TextureAtlas Atlas;
 		private int VirtualWidth, VirtualHeight;
 
-		private AtlasSprite sprite;
+		private ColoredCircle Circle;
+		private AtlasSprite Sprite;
 
 		public Window(int width, int height) : base(width, height, GraphicsMode.Default, "Hello World!") {
 			//WindowState = WindowState.Fullscreen;
@@ -49,8 +50,8 @@ namespace GSharp.Graphics {
 		}
 
 		private void LoadGeometry() {
-			sprite = new AtlasSprite(300, 300, 200, 200, "log_top");
-			AtlasBatch.Add(sprite);
+			Circle = new ColoredCircle(200, 200, 200, new Vector3(255, 0, 255), 32);
+			Batch.Add(Circle);
 		}
 
 		protected override void OnResize(EventArgs e) {

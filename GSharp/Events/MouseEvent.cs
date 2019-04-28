@@ -3,14 +3,19 @@ using System.Collections.Generic;
 using OpenTK.Input;
 
 namespace GSharp.Events {
-	public class MouseEvent : Event {
-		private float X, Y;
-		private MouseButton Button;
+	public class MouseEvent : IEvent {
+		protected float X, Y;
+		protected MouseButton Button;
+		protected bool Canceled = false;
 
 		protected MouseEvent(MouseButton button, float x, float y) {
 			X = x;
 			Y = y;
 			Button = button;
+		}
+
+		public void Cancel() {
+			Canceled = true;
 		}
 
 		public MouseButton GetButton() {
@@ -23,6 +28,10 @@ namespace GSharp.Events {
 
 		public float GetY() {
 			return Y;
+		}
+
+		public bool IsCanceled() {
+			return Canceled;
 		}
 	}
 	

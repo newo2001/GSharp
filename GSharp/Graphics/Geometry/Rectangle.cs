@@ -4,38 +4,28 @@ using System;
 using GSharp.Util;
 
 namespace GSharp.Graphics.Geometry {
-	public class Rectangle : IRenderable, ITransformable {
-		public Vector2 TopLeft;
-		public Vector2 TopRight;
-		public Vector2 BottomRight;
-		public Vector2 BottomLeft;
-		public Vector2 Origin;
-
-		protected int[] Indices = new int[] { 0, 1, 2, 0, 2, 3 };
+	public class Rectangle : Polygon {
+		public Vector2 TopLeft, TopRight, BottomRight, BottomLeft;
+		private int[] Indices = new int[] { 0, 1, 2, 0, 2, 3 };
 		protected float[] Vertices;
-		protected bool Dirty = true;
-		protected Matrix3 Transform;
 
-		public Rectangle(float x, float y, float width, float height) {
+		public Rectangle(float x, float y, float width, float height) : base() {
 			TopLeft = new Vector2(x, y);
 			TopRight = new Vector2(x + width, y);
 			BottomRight = new Vector2(x + width, y + height);
 			BottomLeft = new Vector2(x, y + height);
-
-			Transform = Matrix3.Identity;
-			Origin = GetCenter();
 		}
 
-		public Vector2 GetCenter() {
+		public override Vector2 GetCenter() {
 			return (TopLeft + TopRight + BottomRight + BottomLeft) / 4;
 		}
 
-		public void ApplyTransform() {
+		public override void ApplyTransform() {
 			TopLeft = Transform.Multiply(TopLeft);
 			TopRight = Transform.Multiply(TopRight);
 			BottomRight = Transform.Multiply(BottomRight);
 			BottomLeft = Transform.Multiply(BottomLeft);
-			Transform = Matrix3.Identity;
+			ClearTransform();
 		}
 
 		protected virtual void UpdateData() {
@@ -59,73 +49,16 @@ namespace GSharp.Graphics.Geometry {
 			return TopRight.Distance(BottomRight);
 		}
 
-		public virtual float[] GetVertexData() {
-			UpdateData();
+		public override float[] GetVertexData() {
+			if (Dirty) {
+				UpdateData();
+			}
 
 			return Vertices;
 		}
 
-		public virtual int[] GetIndexData() {
+		public override int[] GetIndexData() {
 			return Indices;
-		}
-
-		public virtual VertexComponent[] GetVertexFormat() {
-			return new VertexComponent[] { VertexComponent.Coord };
-		}
-
-		public bool IsDirty() {
-			return Dirty;
-		}
-
-		public void Scale(float x, float y) {
-			Transform *= new Matrix3(
-				x, 0, 0,
-				0, y, 0,
-				0, 0, 1
-			);
-
-			Dirty = true;
-		}
-
-		public void Scale(float factor) {
-			Scale(factor, factor);
-		}
-
-		public void Scale(Vector2 scale) {
-			Scale(scale.X, scale.Y);
-		}
-
-		public void Rotate(float angle) {
-			if (angle > 2 * Math.PI) {
-				angle %= 2 * (float) Math.PI;
-			}
-
-			if (angle < 0) {
-				angle = 2 * (float) Math.PI + angle;
-			}
-
-			Translate(-Origin);
-			Transform *= new Matrix3(
-				(float) Math.Cos(angle), (float) Math.Sin(angle), 0,
-				(float) -Math.Sin(angle), (float) Math.Cos(angle), 0,
-				0, 0, 1
-			);
-			Translate(Origin);
-
-			Dirty = true;
-		}
-
-		public void Translate(float x, float y) {
-			Transform *= new Matrix3(
-				1, 0, 0,
-				0, 1, 0,
-				x, y, 1
-			);
-			Dirty = true;
-		}
-
-		public void Translate(Vector2 location) {
-			Translate(location.X, location.Y);
 		}
 	}
 
@@ -144,7 +77,6 @@ namespace GSharp.Graphics.Geometry {
 
 		public void SetColor(Vector3 color) {
 			Color = color;
-
 			Dirty = true;
 		}
 

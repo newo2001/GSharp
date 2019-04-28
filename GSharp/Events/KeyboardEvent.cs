@@ -3,15 +3,24 @@ using System;
 using System.Collections.Generic;
 
 namespace GSharp.Events {
-	public class KeyEvent : Event {
-		private Key Key;
+	public class KeyEvent : IEvent {
+		protected Key Key;
+		protected bool Canceled = false;
 
 		protected KeyEvent(Key key) {
 			Key = key;
 		}
 
+		public void Cancel() {
+			Canceled = true;
+		}
+
 		public Key GetKey() {
 			return Key;
+		}
+
+		public bool IsCanceled() {
+			return Canceled;
 		}
 	}
 

@@ -8,5 +8,6 @@ namespace GSharp.Graphics.Geometry {
 		void Rotate(float Angle);
 		void Translate(float x, float y);
 		void Translate(Vector2 location);
+		void ApplyTransform();
 	}
 }

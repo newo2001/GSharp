@@ -68,12 +68,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Events\Event.cs" />
+    <Compile Include="Events\IEvent.cs" />
     <Compile Include="Events\EventHandler.cs" />
     <Compile Include="Events\KeyboardEvent.cs" />
     <Compile Include="Events\MouseEvent.cs" />
+    <Compile Include="Graphics\Geometry\Circle.cs" />
     <Compile Include="Graphics\Geometry\ITransformable.cs" />
+    <Compile Include="Graphics\Geometry\Polygon.cs" />
     <Compile Include="Graphics\Geometry\Rectangle.cs" />
+    <Compile Include="Graphics\Geometry\Triangle.cs" />
     <Compile Include="Graphics\IRenderable.cs" />
     <Compile Include="Graphics\OpenGL\RenderBatch.cs" />
     <Compile Include="Graphics\OpenGL\VertexComponent.cs" />

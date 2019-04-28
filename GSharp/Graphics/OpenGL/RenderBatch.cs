@@ -21,7 +21,7 @@ namespace GSharp.Graphics.OpenGL {
 		private int Vertices = 0, Indices = 0;
 		private bool Dirty = true;
 
-		public RenderBatch(VertexComponent[] format, Shader shader, bool dynamic, int maxVertices = 32000, int maxIndices = 3200) {
+		public RenderBatch(VertexComponent[] format, Shader shader, bool dynamic, int maxVertices = 3200000, int maxIndices = 320000) {
 			Shader = shader;
 			Format = format;
 			MaxVertices = maxVertices;
